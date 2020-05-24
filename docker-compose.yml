@@ -1,0 +1,30 @@
+version: '3'
+services:
+  nginx:
+    image: nginx:latest
+    ports: 
+      - "80:80"
+    volumes:
+      - .:/code
+      - ./config/nginx:/etc/nginx/conf.d
+      - static-files:/static:rw
+    depends_on:
+      - ucs
+
+  ucs:
+    image: ibjsw/ucs:0.23
+    command: >
+            bash -c "cd /root/University-Coding-Site/src/Django/ucs/
+            && python3 manage.py collectstatic --noinput
+            && /root/settings/./serviceRunner.sh
+            && sleep 3
+            && ./auto_init.sh
+            && gunicorn ucs.wsgi:application --bind 0.0.0.0:8000"
+    volumes:
+      - ./config/mysql/mysql.cnf:/root/settings/mysql.cnf
+      - static-files:/static:rw
+    expose:
+      - "8000"
+
+volumes:
+  static-files:
