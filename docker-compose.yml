@@ -11,20 +11,33 @@ services:
     depends_on:
       - ucs
 
+  db:
+    image: mariadb:latest
+    volumes:
+      - ./mariadb/data/:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: "1234"
+      MYSQL_DATABASE: 'UCS'
+    expose:
+      - "3306"
+
+
   ucs:
-    image: ibjsw/ucs:0.23
+    image: ucs_test:0.6
     command: >
-            bash -c "cd /root/University-Coding-Site/src/Django/ucs/
+            bash -c "sleep 20
+            && cd /root/University-Coding-Site/src/Django/ucs/
             && python3 manage.py collectstatic --noinput
-            && /root/settings/./serviceRunner.sh
-            && sleep 3
             && ./auto_init.sh
             && gunicorn ucs.wsgi:application --bind 0.0.0.0:8000"
     volumes:
-      - ./config/mysql/mysql.cnf:/root/settings/mysql.cnf
       - static-files:/static:rw
     expose:
       - "8000"
+    links:
+      - db
+    depends_on:
+      - db
 
 volumes:
   static-files:
