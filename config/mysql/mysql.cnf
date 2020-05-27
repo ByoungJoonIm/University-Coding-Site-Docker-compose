@@ -1,7 +1,0 @@
-# mysql.cnf
-
-[client]
-database=UCS
-host=localhost
-user=root
-password=1234
