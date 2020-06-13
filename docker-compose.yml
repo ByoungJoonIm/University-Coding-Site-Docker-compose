@@ -16,20 +16,23 @@ services:
     volumes:
       - ./mariadb/data/:/var/lib/mysql
     environment:
-      MYSQL_ROOT_PASSWORD: "1234"
+      MYSQL_ROOT_PASSWORD: '${DB_PASS}'
       MYSQL_DATABASE: 'UCS'
     expose:
       - "3306"
 
 
   ucs:
-    image: ucs_test:0.6
+    image: ucs-base:0.6
     command: >
             bash -c "sleep 20
             && cd /root/University-Coding-Site/src/Django/ucs/
             && python3 manage.py collectstatic --noinput
             && ./auto_init.sh
             && gunicorn ucs.wsgi:application --bind 0.0.0.0:8000"
+    environment:
+      MYSQL_ROOT_PASSWORD: '${DB_PASS}'
+      DJANGO_SETTINGS_MODULE: 'ucs.settings.product'
     volumes:
       - static-files:/static:rw
     expose:
