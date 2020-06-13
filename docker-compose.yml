@@ -23,7 +23,7 @@ services:
 
 
   ucs:
-    image: ucs-base:0.6
+    image: ibjsw/ucs-base:0.3
     command: >
             bash -c "sleep 20
             && cd /root/University-Coding-Site/src/Django/ucs/
